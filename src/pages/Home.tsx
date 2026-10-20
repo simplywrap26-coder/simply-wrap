@@ -4,6 +4,7 @@ import { useAsync } from '../hooks/useAsync';
 import ProductGrid from '../components/ProductGrid';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorMessage from '../components/ErrorMessage';
+import NewsletterForm from '../components/NewsletterForm';
 
 function Row({ title, sort, reverse = false }: { title: string; sort: 'BEST_SELLING' | 'CREATED_AT'; reverse?: boolean }) {
   const { data, loading, error } = useAsync(() => getProducts({ first: 4, sortKey: sort, reverse }), []);
@@ -47,6 +48,7 @@ export default function Home() {
       </section>
       <Row title="Best sellers" sort="BEST_SELLING" />
       <Row title="New arrivals" sort="CREATED_AT" reverse />
+      <NewsletterForm />
     </>
   );
 }

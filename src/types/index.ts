@@ -4,9 +4,11 @@ export interface Product {
   id: string; handle: string; title: string; description: string; availableForSale: boolean;
   featuredImage: Image | null; price: Money; compareAtPrice: Money | null; variantId: string;
 }
-export interface Page<T> { items: T[]; hasNextPage: boolean; endCursor: string | null }
+export interface FilterValue { id: string; label: string; count: number; input: string }
+export interface Filter { id: string; label: string; type: string; values: FilterValue[] }
+export interface Page<T> { items: T[]; hasNextPage: boolean; endCursor: string | null; filters?: Filter[] }
 export interface Collection { id: string; handle: string; title: string; description: string; image: Image | null }
-export type SortKey = 'BEST_SELLING' | 'CREATED_AT' | 'PRICE' | 'TITLE';
+export type SortKey = 'BEST_SELLING' | 'CREATED_AT' | 'PRICE' | 'TITLE' | 'RELEVANCE';
 export interface SortOption { label: string; key: SortKey; reverse: boolean }
 
 export interface PhoneModel { id: string; brand: string; name: string; sortOrder: number }

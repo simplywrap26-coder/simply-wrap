@@ -1,4 +1,4 @@
-import type { Collection, Page, PhoneModel, Product, ProductDetail, SortKey } from '../types';
+import type { Collection, Filter, Page, PhoneModel, Product, ProductDetail, SortKey } from '../types';
 
 const domain = import.meta.env.VITE_SHOPIFY_STORE_DOMAIN as string | undefined;
 const version = (import.meta.env.VITE_SHOPIFY_API_VERSION as string | undefined) ?? '2025-01';
@@ -38,7 +38,7 @@ function mapProduct(n: any): Product {
   };
 }
 
-export interface ProductQuery { sortKey?: SortKey; reverse?: boolean; after?: string | null; first?: number; query?: string }
+export interface ProductQuery { sortKey?: SortKey; reverse?: boolean; after?: string | null; first?: number; query?: string; filters?: string[] }
 
 export async function getProducts(opts: ProductQuery = {}): Promise<Page<Product>> {
   const data = await storefront<any>(
@@ -57,26 +57,44 @@ export async function getCollections(): Promise<Collection[]> {
   return data.collections.nodes;
 }
 
+const FILTERS_FIELDS = `id label type values{ id label count input }`;
+const mapFilters = (arr: any[] = []): Filter[] => arr.map((f) => ({ id: f.id, label: f.label, type: f.type, values: f.values }));
+/** Filter inputs are JSON strings returned by Shopify; we send them back unchanged. */
+const parseFilters = (f: string[] = []) => f.map((x) => JSON.parse(x));
+
 export async function getCollectionProducts(handle: string, opts: ProductQuery = {}) {
-  const sortMap: Record<SortKey, string> = { BEST_SELLING: 'BEST_SELLING', CREATED_AT: 'CREATED', PRICE: 'PRICE', TITLE: 'TITLE' };
+  const sortMap: Record<SortKey, string> = { BEST_SELLING: 'BEST_SELLING', CREATED_AT: 'CREATED', PRICE: 'PRICE', TITLE: 'TITLE', RELEVANCE: 'BEST_SELLING' };
   const data = await storefront<any>(
-    `query($handle:String!,$first:Int!,$after:String,$sortKey:ProductCollectionSortKeys,$reverse:Boolean){
+    `query($handle:String!,$first:Int!,$after:String,$sortKey:ProductCollectionSortKeys,$reverse:Boolean,$filters:[ProductFilter!]){
       collection(handle:$handle){
         title description
-        products(first:$first, after:$after, sortKey:$sortKey, reverse:$reverse){
-          nodes{ ${PRODUCT_FIELDS} } pageInfo{ hasNextPage endCursor }
+        products(first:$first, after:$after, sortKey:$sortKey, reverse:$reverse, filters:$filters){
+          nodes{ ${PRODUCT_FIELDS} } pageInfo{ hasNextPage endCursor } filters{ ${FILTERS_FIELDS} }
         }
       }
     }`,
-    { handle, first: opts.first ?? 12, after: opts.after ?? null, sortKey: sortMap[opts.sortKey ?? 'BEST_SELLING'], reverse: opts.reverse ?? false },
+    { handle, first: opts.first ?? 12, after: opts.after ?? null, sortKey: sortMap[opts.sortKey ?? 'BEST_SELLING'], reverse: opts.reverse ?? false, filters: parseFilters(opts.filters) },
   );
   if (!data.collection) return null;
   const p = data.collection.products;
   return {
     title: data.collection.title as string,
     description: data.collection.description as string,
-    page: { items: p.nodes.map(mapProduct), hasNextPage: p.pageInfo.hasNextPage, endCursor: p.pageInfo.endCursor } as Page<Product>,
+    page: { items: p.nodes.map(mapProduct), hasNextPage: p.pageInfo.hasNextPage, endCursor: p.pageInfo.endCursor, filters: mapFilters(p.filters) } as Page<Product>,
   };
+}
+
+export async function searchProducts(opts: ProductQuery = {}): Promise<Page<Product>> {
+  const data = await storefront<any>(
+    `query($q:String!,$first:Int!,$after:String,$sortKey:SearchSortKeys,$reverse:Boolean,$filters:[ProductFilter!]){
+      search(query:$q, first:$first, after:$after, types:PRODUCT, sortKey:$sortKey, reverse:$reverse, productFilters:$filters){
+        nodes{ ... on Product { ${PRODUCT_FIELDS} } } pageInfo{ hasNextPage endCursor } productFilters{ ${FILTERS_FIELDS} }
+      }
+    }`,
+    { q: opts.query ?? '', first: opts.first ?? 12, after: opts.after ?? null, sortKey: opts.sortKey === 'PRICE' ? 'PRICE' : 'RELEVANCE', reverse: opts.reverse ?? false, filters: parseFilters(opts.filters) },
+  );
+  const s = data.search;
+  return { items: s.nodes.map(mapProduct), hasNextPage: s.pageInfo.hasNextPage, endCursor: s.pageInfo.endCursor, filters: mapFilters(s.productFilters) };
 }
 
 /** Brands come from Shopify metaobjects (type: phone_model, field: brand), never hardcoded. */
