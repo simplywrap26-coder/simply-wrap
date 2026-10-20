@@ -12,6 +12,9 @@ const Contact = lazy(() => import('./pages/Contact'));
 const FAQ = lazy(() => import('./pages/FAQ'));
 const PolicyPage = lazy(() => import('./pages/PolicyPage'));
 
+// BASE_URL comes from vite.config.ts (VITE_BASE_PATH), e.g. "/simply-wrap/" on GitHub Pages.
+const basename = import.meta.env.BASE_URL.replace(/\/$/, '') || '/';
+
 const router = createBrowserRouter([
   {
     element: <RootLayout />,
@@ -31,6 +34,6 @@ const router = createBrowserRouter([
       { path: '/terms', element: <PolicyPage kind="termsOfService" title="Terms of service" /> },
     ],
   },
-]);
+], { basename });
 
 export default function App() { return <RouterProvider router={router} />; }
