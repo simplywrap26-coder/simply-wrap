@@ -24,7 +24,7 @@ export default function SearchableSelect({ label, options, value, onChange, disa
   return (
     <div className="relative">
       <label htmlFor={id} className="mb-1.5 block text-sm font-medium">{label}</label>
-      <div className={`flex items-center border bg-paper ${error ? 'border-ink' : 'border-mist'} ${disabled ? 'opacity-50' : ''}`}>
+      <div className={`flex items-center rounded-xl border bg-paper ${error ? 'border-ink' : 'border-mist'} ${disabled ? 'opacity-50' : ''}`}>
         <input
           id={id} role="combobox" aria-expanded={open} aria-controls={`${id}-list`} aria-autocomplete="list"
           aria-invalid={!!error} aria-describedby={error ? `${id}-err` : undefined}
@@ -37,7 +37,7 @@ export default function SearchableSelect({ label, options, value, onChange, disa
         <ChevronDown size={16} className="mr-3 text-stone" aria-hidden />
       </div>
       {open && !disabled && (
-        <ul id={`${id}-list`} role="listbox" className="absolute z-20 mt-1 max-h-60 w-full overflow-auto border border-mist bg-paper shadow-lg">
+        <ul id={`${id}-list`} role="listbox" className="absolute z-20 mt-1 max-h-60 w-full overflow-auto rounded-xl border border-mist bg-paper shadow-lg">
           {shown.length === 0 && <li className="px-3 py-3 text-sm text-stone">No matches</li>}
           {shown.map((o, i) => (
             <li key={o} role="option" aria-selected={o === value} onMouseDown={(e) => { e.preventDefault(); pick(o); }}

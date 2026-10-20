@@ -7,7 +7,7 @@ export default function ProductGallery({ images, title }: { images: Image[]; tit
   const src = (u: string, w: number) => `${u}${u.includes('?') ? '&' : '?'}width=${w}`;
   return (
     <div>
-      <div className="aspect-[4/5] overflow-hidden bg-sand">
+      <div className="aspect-[4/5] overflow-hidden rounded-3xl bg-sand">
         <img src={src(images[i].url, 1000)} alt={images[i].altText ?? title} className="h-full w-full object-cover" />
       </div>
       {images.length > 1 && (

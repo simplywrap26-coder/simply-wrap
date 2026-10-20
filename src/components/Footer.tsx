@@ -8,22 +8,22 @@ const cols = [
 
 export default function Footer() {
   return (
-    <footer className="mt-24 border-t border-mist bg-sand/40">
-      <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 md:grid-cols-4">
+    <footer className="mt-24 bg-ink text-paper">
+      <div className="mx-auto grid max-w-7xl gap-10 px-5 py-16 md:grid-cols-4">
         <div>
-          <p className="font-display text-2xl">Simply Wrap</p>
-          <p className="mt-3 max-w-xs text-sm text-stone">Premium vinyl wraps for your phone.</p>
+          <p className="font-display text-3xl">Simply Wrap</p>
+          <p className="mt-4 max-w-xs text-sm text-paper/60">Premium vinyl wraps that let you express your style while protecting your phone.</p>
         </div>
         {cols.map((c) => (
           <nav key={c.title} aria-label={c.title}>
             <p className="text-sm font-medium">{c.title}</p>
-            <ul className="mt-3 space-y-2 text-sm text-stone">
-              {c.links.map(([to, label]) => (<li key={to}><Link to={to} className="hover:text-ink">{label}</Link></li>))}
+            <ul className="mt-4 space-y-2.5 text-sm text-paper/60">
+              {c.links.map(([to, label]) => (<li key={to}><Link to={to} className="transition-colors hover:text-paper">{label}</Link></li>))}
             </ul>
           </nav>
         ))}
       </div>
-      <p className="border-t border-mist py-5 text-center text-xs text-stone">© {new Date().getFullYear()} Simply Wrap</p>
+      <p className="border-t border-paper/10 py-6 text-center text-xs text-paper/50">© {new Date().getFullYear()} Simply Wrap. All logos and trademarks belong to their owners.</p>
     </footer>
   );
 }

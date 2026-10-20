@@ -43,7 +43,7 @@ export default function CartDrawer() {
             <div className="flex justify-between text-sm"><span>Subtotal</span><span className="font-medium">{formatMoney(cart!.subtotal)}</span></div>
             <p className="mt-1 text-xs text-stone">Shipping and taxes are calculated at checkout.</p>
             {/* Shopify hosts checkout: we only redirect to the URL it returns. */}
-            <a href={cart!.checkoutUrl} className="mt-4 block bg-ink py-4 text-center text-sm text-paper transition-colors hover:bg-ink/85">Checkout</a>
+            <a href={cart!.checkoutUrl} className="mt-4 block rounded-full bg-ink py-4 text-center text-sm text-paper transition-colors hover:bg-ink/85">Checkout</a>
           </div>
         )}
       </aside>

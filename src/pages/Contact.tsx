@@ -40,7 +40,7 @@ export default function Contact() {
         {field('name', 'Name')}
         {field('email', 'Email', 'email')}
         {field('message', 'Message')}
-        <button type="submit" className="bg-ink px-8 py-3.5 text-sm text-paper transition-colors hover:bg-ink/85">Send message</button>
+        <button type="submit" className="rounded-full bg-ink px-8 py-3.5 text-sm text-paper transition-colors hover:bg-ink/85">Send message</button>
         {note && <p role="status" className="text-sm text-stone">{note}</p>}
       </form>
     </ContentPage>

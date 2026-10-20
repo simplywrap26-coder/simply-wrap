@@ -84,20 +84,20 @@ export default function ProductPage() {
           </div>
 
           <div className="mt-6 flex items-center gap-4">
-            <div className="flex items-center border border-mist" role="group" aria-label="Quantity">
+            <div className="flex items-center overflow-hidden rounded-full border border-mist" role="group" aria-label="Quantity">
               <button className="p-3" aria-label="Decrease quantity" onClick={() => setQty(Math.max(1, qty - 1))}><Minus size={14} /></button>
               <span className="w-8 text-center text-sm" aria-live="polite">{qty}</span>
               <button className="p-3" aria-label="Increase quantity" onClick={() => setQty(Math.min(20, qty + 1))}><Plus size={14} /></button>
             </div>
             <button onClick={handleAdd} disabled={busy || !p.availableForSale || p.models.length === 0}
-              className="flex-1 bg-ink py-3.5 text-sm text-paper transition-colors hover:bg-ink/85 disabled:bg-mist disabled:text-stone">
+              className="flex-1 rounded-full bg-ink py-3.5 text-sm text-paper transition-colors hover:bg-ink/85 disabled:bg-mist disabled:text-stone">
               {!p.availableForSale ? 'Sold out' : busy ? 'Adding…' : 'Add to cart'}
             </button>
           </div>
           {status && <p role="status" className="mt-3 text-sm text-stone">{status}</p>}
           {cartError && <p role="alert" className="mt-3 text-sm">{cartError}</p>}
 
-          <div className="mt-10 divide-y divide-mist border-y border-mist text-sm">
+          <div className="mt-10 divide-y divide-mist rounded-2xl border border-mist px-5 text-sm">
             {[
               ['Details and care', 'Premium vinyl with a matte finish. Clean the surface and apply to a dry phone. To clean, wipe with a soft damp cloth. Edit this copy in ProductPage.tsx.'],
               ['Shipping and returns', 'Shipping times and return terms are shown at checkout. Edit this copy once your policies are final.'],

@@ -67,7 +67,7 @@ export default function ProductListing({ fetchPage, sorts = SORTS }: Props) {
         {loading && <LoadingSpinner />}
         {!loading && more && (
           <div className="mt-12 text-center">
-            <button onClick={() => load(cursor, false)} className="border border-ink px-8 py-3 text-sm transition-colors hover:bg-ink hover:text-paper">Load more</button>
+            <button onClick={() => load(cursor, false)} className="rounded-full border border-ink px-8 py-3 text-sm transition-colors hover:bg-ink hover:text-paper">Load more</button>
           </div>
         )}
       </div>

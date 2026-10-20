@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import ContentPage from '../components/ContentPage';
 
 // Placeholder answers: edit to match your real products and policies.
-const faqs: [string, React.ReactNode][] = [
+export const faqs: [string, React.ReactNode][] = [
   ['How do I find a wrap for my phone?', 'Open any wrap, choose your phone brand, then your model. Only models the wrap is made for are listed.'],
   ['Can I order the same wrap for two phones?', 'Yes. Add it once per phone. Each cart line keeps its own brand and model.'],
   ['How do I apply a wrap?', 'Clean and dry the phone, line up the wrap with the camera cutout, and smooth it down from one edge. Add your own step-by-step guide here.'],

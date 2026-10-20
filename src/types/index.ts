@@ -23,3 +23,8 @@ export interface CartLine {
   total: Money; unitPrice: Money; productTitle: string; productHandle: string; image: Image | null;
 }
 export interface Cart { id: string; checkoutUrl: string; totalQuantity: number; subtotal: Money; lines: CartLine[] }
+
+export interface Banner {
+  heading: string; subheading: string; buttonLabel: string; link: string;
+  image: string; imageAlt: string; placement: 'hero' | 'promo'; sortOrder: number;
+}

@@ -1,4 +1,4 @@
-import type { Collection, Filter, Page, PhoneModel, Product, ProductDetail, SortKey } from '../types';
+import type { Banner, Collection, Filter, Page, PhoneModel, Product, ProductDetail, SortKey } from '../types';
 
 const domain = import.meta.env.VITE_SHOPIFY_STORE_DOMAIN as string | undefined;
 const version = (import.meta.env.VITE_SHOPIFY_API_VERSION as string | undefined) ?? '2025-01';
@@ -140,4 +140,35 @@ export type PolicyKind = 'privacyPolicy' | 'shippingPolicy' | 'refundPolicy' | '
 export async function getShopPolicy(kind: PolicyKind): Promise<{ title: string; body: string } | null> {
   const data = await storefront<any>(`{ shop { ${kind} { title body } } }`);
   return data.shop[kind] ?? null;
+}
+
+/** Hosted customer accounts (login + order history) live on Shopify. Override with VITE_ACCOUNT_URL. */
+export const accountUrl = (import.meta.env.VITE_ACCOUNT_URL as string | undefined) ?? (domain ? `https://${domain}/account` : '#');
+
+/** Generic reader for admin-managed content. Returns each entry as {fieldKey: value}; image fields become URLs. */
+export async function getMetaobjects(type: string): Promise<Record<string, string>[]> {
+  const data = await storefront<any>(
+    `query($type:String!){ metaobjects(type:$type, first:50){ nodes{ fields{ key value reference{ ... on MediaImage{ image{ url altText } } } } } } }`,
+    { type },
+  );
+  return data.metaobjects.nodes.map((n: any) => {
+    const row: Record<string, string> = {};
+    for (const f of n.fields) {
+      row[f.key] = f.reference?.image?.url ?? f.value ?? '';
+      if (f.reference?.image) row[`${f.key}_alt`] = f.reference.image.altText ?? '';
+    }
+    return row;
+  });
+}
+
+export async function getBanners(): Promise<Banner[]> {
+  const rows = await getMetaobjects('banner');
+  return rows
+    .filter((r) => r.active !== 'false' && r.image)
+    .map((r) => ({
+      heading: r.heading ?? '', subheading: r.subheading ?? '', buttonLabel: r.button_label ?? '', link: r.link ?? '',
+      image: r.image, imageAlt: r.image_alt ?? '', placement: (r.placement === 'promo' ? 'promo' : 'hero') as Banner['placement'],
+      sortOrder: Number(r.sort_order ?? 0),
+    }))
+    .sort((a, b) => a.sortOrder - b.sortOrder);
 }
